@@ -6,6 +6,7 @@
 	const cookieParser = require('cookie-parser');
 	const mysql = require("mysql");
 	const path = require('path');
+	const fitbitApiClient = require("fitbit-node");
 
 	//Envoking Express
 	let app = express();
@@ -33,8 +34,8 @@
 	
 	
 
-	let ACCOUNT_SID = process.env.accountSid;
-	let AUTHTOKEN = process.env.authToken;
+	let accountSid = process.env.ACCOUNT_SID;
+	let authToken = process.env.AUTHTOKEN;
 	let twilioClient = new twilio(accountSid, authToken);
 	const number = '3237150014';
 	
@@ -49,12 +50,11 @@
 	.then((message) => console.log(message.sid));
 	
 	// initialize the Fitbit API client
-	const fitbitApiClient = require("fitbit-node");
-	const fitbitClient = new FitbitApiClient({
-		fitbitClientId: "FITBIT_ID",
-		fitbitClientSecret: "FITBIT_SECRET",
-		apiVersion: '1.2' // 1.2 is the default
-	});
+	// const fitbitClient = new FitbitApiClient({
+	// 	fitbitClientId: process.env.FITBIT_ID,
+	// 	fitbitClientSecret: process.env.FITBIT_SECRET,
+	// 	apiVersion: '1.2' // 1.2 is the default
+	// });
 	
 	// redirect the user to the Fitbit authorization page
 	app.get("/authorize", (req, res) => {
@@ -84,7 +84,37 @@
 	});
 
 
-
+	app.get('/fit', function(req, res){
+		connection.query('SELECT * FROM users WHERE email = ?', [req.body.email],function (error, results, fields) {
+		  if (error) throw error;
+		
+					// req.id = results[0].id;
+					req.user = results[0].name;
+					req.email = results[0].email;
+					
+					// id = req.id;
+					user = req.name;
+					email = req.email;
+	
+					// console.log(user_id);
+					console.log(email);
+					console.log(user);
+	
+		// connection.query('SELECT id, name, lastName, email, cellphone, FROM wishlist WHERE user_id = ?', [results[0].id],function (error, results2, fields) {
+		// 	if (error) throw error;
+	
+		// 	req.session.list = results2
+		// 	list = (req.session.list)
+	
+		// 	// console.log(list[0]);
+			
+			res.render('users');
+		});
+	
+			// });
+	
+		});
+	// });
 
 
 
