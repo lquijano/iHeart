@@ -4,7 +4,9 @@
 	const { urlencoded } = require('body-parser');
 	const twilio = require('twilio');
 	const cookieParser = require('cookie-parser');
-	
+	const mysql = require("mysql");
+	const path = require('path');
+
 	//Envoking Express
 	let app = express();
 	
@@ -14,9 +16,29 @@
 	
 	//PORT # 3001
 	const PORT = 3001;
+
+
+	//Connection to MySQL database
+	const connection = mysql.createConnection({
+		host: "localhost",
+		// Your port; if not 3306
+		port: 3306,
+		// Your username
+		user: "root",
+		// Your password
+		password: "",
+		database: "fitTracker"
+	});
+
 	
+	
+
+	let ACCOUNT_SID = process.env.accountSid;
+	let AUTHTOKEN = process.env.authToken;
 	let twilioClient = new twilio(accountSid, authToken);
 	const number = '3237150014';
+	
+	
 	
 	//Twilio Message Creator
 	twilioClient.messages.create({
@@ -54,6 +76,25 @@
 			res.status(err.status).send(err);
 		});
 	});
+
+
+	// Test
+	app.get('/', function(req, res) {
+		res.send('Hello, Welcome to iHeart :)!!!');
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	// Listen on port 3001
 	app.listen(PORT, function() {

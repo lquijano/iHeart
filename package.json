@@ -1,0 +1,29 @@
+{
+  "name": "iheart",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lquijano/iHeart.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lquijano/iHeart/issues"
+  },
+  "homepage": "https://github.com/lquijano/iHeart#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "fitbit-node": "^2.1.0",
+    "mysql": "^2.16.0",
+    "twilio": "^3.23.2"
+  }
+}
