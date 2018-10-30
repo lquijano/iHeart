@@ -85,36 +85,12 @@
 
 
 	app.get('/fit', function(req, res){
-		connection.query('SELECT * FROM users WHERE email = ?', [req.body.email],function (error, results, fields) {
-		  if (error) throw error;
-		
-					// req.id = results[0].id;
-					req.user = results[0].name;
-					req.email = results[0].email;
-					
-					// id = req.id;
-					user = req.name;
-					email = req.email;
-	
-					// console.log(user_id);
-					console.log(email);
-					console.log(user);
-	
-		// connection.query('SELECT id, name, lastName, email, cellphone, FROM wishlist WHERE user_id = ?', [results[0].id],function (error, results2, fields) {
-		// 	if (error) throw error;
-	
-		// 	req.session.list = results2
-		// 	list = (req.session.list)
-	
-		// 	// console.log(list[0]);
-			
-			res.render('users');
-		});
-	
-			// });
-	
-		});
-	// });
+
+		connection.query('SELECT * FROM users', function (error, results, fields) {
+		if (error) throw error;
+		res.json(results);
+	});
+	});
 
 
 
