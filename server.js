@@ -78,12 +78,12 @@
 	});
 
 
-	// Test
+	// Home Page
 	app.get('/', function(req, res) {
 		res.send('Hello, Welcome to iHeart :)!!!');
 	});
 
-
+	// Shows users DB Table
 	app.get('/fit', function(req, res){
 
 		connection.query('SELECT * FROM users', function (error, results, fields) {
@@ -92,6 +92,16 @@
 		});
 	});
 
+	//Shows family members DB Table
+	app.get('/firstresponse', function(req, res){
+
+		connection.query('SELECT * FROM firstResponse', function (error, results, fields) {
+		if (error) throw error;
+		res.json(results);
+		});
+	});
+
+	// Sign up form
 	app.post('/new_user', function(req, res){
 		
 		var query = connection.query(
