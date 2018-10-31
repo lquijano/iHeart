@@ -89,9 +89,21 @@
 		connection.query('SELECT * FROM users', function (error, results, fields) {
 		if (error) throw error;
 		res.json(results);
-	});
+		});
 	});
 
+	app.post('/new_user', function(req, res){
+		
+		var query = connection.query(
+		"INSERT INTO users SET ?",
+		req.body,
+		function(error, response, fields) {
+			if (error) throw error;
+			console.log(req.body);
+			res.redirect('/fit');
+		}
+		);
+	})
 
 
 
