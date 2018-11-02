@@ -7,11 +7,15 @@
 	const mysql = require("mysql");
 	const path = require('path');
 	const fitbitApiClient = require("fitbit-node");
+	const bodyParser = require('body-parser');
 
 	//Envoking Express
 	let app = express();
-	
+
+
+	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(cookieParser('sess'));
+	app.use(bodyParser.json());
 	app.use(express.static(__dirname + '/public'));
 	app.use(urlencoded({ extended: false }));
 	
@@ -101,8 +105,14 @@
 		});
 	});
 
+	// renders signup page
+	app.get('/signup', function(req, res){
+		res.sendFile(path.join(__dirname, "public/signUp.html"));
+	});
+
+
 	// Sign up form
-	app.post('/new_user', function(req, res){
+	app.post('/signup', function(req, res){
 		
 		var query = connection.query(
 		"INSERT INTO users SET ?",
@@ -110,7 +120,7 @@
 		function(error, response, fields) {
 			if (error) throw error;
 			console.log(req.body);
-			res.redirect('/fit');
+			res.redirect('/');
 		}
 		);
 	})
