@@ -10,7 +10,6 @@
 	const bodyParser = require('body-parser');
 	const dateFormat = require('dateformat');
 	const session = require('express-session');
-	const http = require('http');
 
 	//Envoking Express
 	let app = express();
@@ -68,13 +67,13 @@
 	// redirect the user to the Fitbit authorization page
 	app.get("/hr", function (req, res) {
 	    // request access to the user's activity, heartrate, location, nutrion, profile, settings, sleep, social, and weight scopes
-	    res.redirect(client.getAuthorizeUrl('activity heartrate location nutrition profile settings sleep social weight', 'http://localhost:3001/callback'));
+	    res.redirect(client.getAuthorizeUrl('activity heartrate location nutrition profile settings sleep social weight', 'http://localhost:3001/'));
 	});
 
 	// handle the callback from the Fitbit authorization flow
 	app.get("/hr", function (req, res) {
 	    // exchange the authorization code we just received for an access token
-	    client.getAccessToken(req.query.code, 'http://localhost:3001/callback').then(function (result) {
+	    client.getAccessToken(req.query.code, 'http://localhost:3001/').then(function (result) {
 	        // use the access token to fetch the user's profile information
 	        req.session.authorized = true;
 	        req.session.access_token = result.access_token;
@@ -102,7 +101,6 @@
 	        res.json({ errors: [{ message: 'not authorized' }]});
 	    }
 	});
-
 
 
 	// Home Page
