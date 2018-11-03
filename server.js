@@ -7,7 +7,9 @@
 	const mysql = require("mysql");
 	const path = require('path');
 	const fitbitApiClient = require("fitbit-node");
+				client = new FitbitApiClient("YOUR_SECRET", "YOUR_KEY");
 	const bodyParser = require('body-parser');
+	const dateFormat = require('dateformat');
 
 	//Envoking Express
 	let app = express();
@@ -18,7 +20,7 @@
 	app.use(bodyParser.json());
 	app.use(express.static(__dirname + '/public'));
 	app.use(urlencoded({ extended: false }));
-	
+
 	//PORT # 3001
 	const PORT = 3001;
 
@@ -35,16 +37,16 @@
 		database: "fitTracker"
 	});
 
-	
-	
+
+
 
 	let accountSid = process.env.ACCOUNT_SID;
 	let authToken = process.env.AUTHTOKEN;
 	let twilioClient = new twilio(accountSid, authToken);
 	const number = '3237150014';
-	
-	
-	
+
+
+
 	//Twilio Message Creator
 	twilioClient.messages.create({
 			to: number,  // Text this number
@@ -52,34 +54,57 @@
 		  body: 'Hello! Welcome to FitHeart Tracker. A friend or family member has added you to their First Response Group. For more information visit https://github.com/lquijano/FitHeartTracker'
 	})
 	.then((message) => console.log(message.sid));
-	
-	// initialize the Fitbit API client
-	// const fitbitClient = new FitbitApiClient({
-	// 	fitbitClientId: process.env.FITBIT_ID,
-	// 	fitbitClientSecret: process.env.FITBIT_SECRET,
-	// 	apiVersion: '1.2' // 1.2 is the default
-	// });
-	
+
+
 	// redirect the user to the Fitbit authorization page
-	app.get("/authorize", (req, res) => {
-		// request access to the user's heartrate, location, profile
-		res.redirect(fitbitClient.getAuthorizeUrl('heartrate, location, profile information', 'https://fithearttracker.herokuapp.com/home'));
+	app.get("/hr", function (req, res) {
+	    // request access to the user's heartrate
+	    res.redirect(client.getAuthorizeUrl('heartrate', 'http://localhost:3001/callback'));
 	});
-	
+
 	// handle the callback from the Fitbit authorization flow
-	app.get("/callback", (req, res) => {
-		// exchange the authorization code we just received for an access token
-		fitbitClient.getAccessToken(req.query.code, 'https://fithearttracker.herokuapp.com/home').then(result => {
-			// use the access token to fetch the user's profile information
-			fitbitClient.get("/profile.json", result.access_token).then(results => {
-				res.send(results[0]);
-			}).catch(err => {
-				res.status(err.status).send(err);
-			});
-		}).catch(err => {
-			res.status(err.status).send(err);
-		});
+	app.get("/callback", function (req, res) {
+	        var menu = "<p><a href='/gethr?code=" + req.query.code + "'>Get HR for Today</a>" +
+	                   "<p><a href='/gethr?code=" + req.query.code + "&day=yyyy-MM-dd'>Get HR for Specific Day (Must Manually Update URL)</a>";
+	        res.send(menu);
 	});
+
+	app.get("/gethr", function (req, res) {
+	        var specificday = req.query.day;
+	        var code      = req.query.code;
+
+	    // exchange the authorization code we just received for an access token
+	    client.getAccessToken(code, 'http://localhost:3001/callback').then(function (result) {
+	        // log the access token
+	//      console.log("Got access token: " + result.access_token);
+	        // use the access token to fetch the user's profile information
+	        if(specificday) {
+	                client.get("/activities/heart/date/" + specificday + "/" + specificday + "/1sec/time/00:00/23:59.json", result.access_token).then(function (results) {
+	                var csv = "<pre>date,time,HR";
+	                for(var bit in results[0]['activities-heart-intraday']['dataset']) {
+	                        csv = csv + "\r\n" + specificday + "," + results[0]['activities-heart-intraday']['dataset'][bit]['time'] + ',' + results[0]['activities-heart-intraday']['dataset'][bit]['value'];
+	                }
+	                res.send(csv);
+	               });
+
+	        } else {
+
+	        client.get("/activities/heart/date/today/1d/1sec/time/00:00/23:59.json", result.access_token).then(function (results) {
+	                //Now get the heart rate data
+	                var csv = "<pre>date,time,HR";
+	                var datebit = dateFormat( (new Date()), 'yyyy-mm-dd' );
+	                for(var bit in results[0]['activities-heart-intraday']['dataset']) {
+	                        csv = csv + "\r\n" + datebit + "," + results[0]['activities-heart-intraday']['dataset'][bit]['time'] + ',' + results[0]['activities-heart-intraday']['dataset'][bit]['value'];
+	                }
+	            res.send(csv);
+	        });
+
+	        }
+	    }).catch(function (error) {
+	        res.send(error);
+	    });
+	});
+
 
 
 	// Home Page
@@ -117,7 +142,7 @@
 
 	// Insert new users to the DB
 	app.post('/signup', function(req, res){
-		
+
 		var query = connection.query(
 		"INSERT INTO users SET ?",
 		req.body,
@@ -131,7 +156,7 @@
 
 	// Insert new users to the DB
 	app.post('/contacts', function(req, res){
-		
+
 		var query = connection.query(
 		"INSERT INTO `firstResponse` (name, lastName, relationship, cellphone) values ?",
 		// ('" + name + "', '" + lastName + "', '" + relationship + "', '" + cellphone + "');"
@@ -144,15 +169,6 @@
 		);
 	})
 
-
-
-
-
-
-
-
-
-	
 	// Listen on port 3001
 	app.listen(PORT, function() {
 	console.log('🌎 ==> Now listening on PORT %s! Visit http://localhost:%s in your browser!', PORT, PORT);

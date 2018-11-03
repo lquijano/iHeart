@@ -32,6 +32,3 @@ heartRate INT NOT NULL,
 PRIMARY KEY (id),
 FOREIGN KEY (heartRateUser_id) REFERENCES users(id)
 );
-
-
-
