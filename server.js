@@ -22,7 +22,7 @@
 	app.use(urlencoded({ extended: false }));
 
 	//PORT # 3001
-	const PORT = 3001;
+	const PORT = process.env.PORT || 3001;
 
 
 	//Connection to MySQL database
@@ -55,10 +55,10 @@
 	.then((message) => console.log(message.sid));
 
 
-//env fitbit keys
-	const client_id = process.env.CLIENT_ID;
-	const fitbit_secret = process.env.FITBIT_SECRET;
-	const client = new fitbitApiClient("FITBIT_ID", "FITBIT_SECRET");
+// //env fitbit keys
+// 	const client_id = process.env.CLIENT_ID;
+// 	const fitbit_secret = process.env.FITBIT_SECRET;
+// 	const client = new fitbitApiClient("FITBIT_ID", "FITBIT_SECRET");
 
 
 	// Use the session middleware
@@ -105,7 +105,7 @@
 
 	// Home Page
 	app.get('/', function(req, res) {
-		res.send('Hello, Welcome to iHeart :)!!!');
+		res.sendFile(path.join(__dirname, "public/home.html"));
 	});
 
 	// Shows users DB Table
@@ -135,6 +135,25 @@
 		}
 		);
 	})
+
+	// renders login page
+	app.get('/login', function(req, res){
+		res.sendFile(path.join(__dirname, "public/login.html"));
+	});
+
+	//log in form
+	app.post('/login', function(req, res){
+		// res.json(req.body)
+		connection.query('SELECT * FROM users WHERE email = ?', 
+		[req.body.email], function (error, results, fields) {
+		if (error) throw error;
+		req.session.email = results[0].email;
+		// res.session.user_id = results[0].id;
+		// res.json(results[0]);
+		console.log(results)
+		res.redirect('/');
+		});
+	});
 
 
 	// Listen on port 3001
