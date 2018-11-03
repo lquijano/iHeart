@@ -7,15 +7,21 @@
     <title>Sign Up Form</title>
 </head>
 <body>
+    <h1>Enter Info:</h1>
 <form action="/signup" method="POST">
     <input type="text" class="form-control" name="name" id="name"  placeholder="Enter your First Name"/> 
     <input type="text" class="form-control" name="lastName" id="lastname"  placeholder="Enter your Last Name"/>
-    <br>
+    <br><br>
     <input type="email" class="form-control" name="email" id="email"  placeholder="Enter your Email"/>
     <input type="text" class="form-control" name="cellphone" id="cellphone"  placeholder="Enter your Cellphone"/>
-    <input type="password" class="form-control" name="password" id="password"  placeholder="Enter a Password"/>
     <br> <br>
-    <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Register</button>
+    <input type="password" class="form-control" name="password" id="password"  placeholder="Enter a Password"/>
+    <br>
+<h1> Contact Info:</h1>
+    <input type="text" class="form-control" name="contact" id="contact"  placeholder="Enter Name"/> 
+    <input type="text" class="form-control" name="telephone" id="telephone"  placeholder="Enter a cellphone"/>
+    <br> <br>
+    <button type="submit" class="btn btn-primary btn-lg btn-block login-button"><a href="/hr">Submit</a></button>
 </form>
 
 </body>
