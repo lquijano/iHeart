@@ -9,11 +9,15 @@
 	const fitbitApiClient = require("fitbit-node");
 				client = new FitbitApiClient("YOUR_SECRET", "YOUR_KEY");
 	const bodyParser = require('body-parser');
+
 	const dateFormat = require('dateformat');
+
+	const session = require('express-session');
+
 
 	//Envoking Express
 	let app = express();
-
+	app.use(session({ secret: 'app', cookie: { maxAge: 1*1000*60*60*24*365}}));
 
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(cookieParser('sess'));
@@ -113,18 +117,9 @@
 	});
 
 	// Shows users DB Table
-	app.get('/fit', function(req, res){
+	app.get('/users', function(req, res){
 
 		connection.query('SELECT * FROM users', function (error, results, fields) {
-		if (error) throw error;
-		res.json(results);
-		});
-	});
-
-	//Shows family members DB Table
-	app.get('/firstresponse', function(req, res){
-
-		connection.query('SELECT * FROM firstResponse', function (error, results, fields) {
 		if (error) throw error;
 		res.json(results);
 		});
@@ -134,12 +129,7 @@
 	app.get('/signup', function(req, res){
 		res.sendFile(path.join(__dirname, "public/signUp.html"));
 	});
-	// renders contacts page
-	app.get('/contacts', function(req, res){
-		res.sendFile(path.join(__dirname, "public/contacts.html"));
-	});
-
-
+	
 	// Insert new users to the DB
 	app.post('/signup', function(req, res){
 
@@ -154,20 +144,6 @@
 		);
 	})
 
-	// Insert new users to the DB
-	app.post('/contacts', function(req, res){
-
-		var query = connection.query(
-		"INSERT INTO `firstResponse` (name, lastName, relationship, cellphone) values ?",
-		// ('" + name + "', '" + lastName + "', '" + relationship + "', '" + cellphone + "');"
-		(req.body),
-		function(error, response, fields) {
-			if (error) throw error;
-			console.log(req.body);
-			res.redirect('/');
-		}
-		);
-	})
 
 	// Listen on port 3001
 	app.listen(PORT, function() {
