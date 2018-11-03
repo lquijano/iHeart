@@ -109,14 +109,33 @@
 	app.get('/signup', function(req, res){
 		res.sendFile(path.join(__dirname, "public/signUp.html"));
 	});
+	// renders contacts page
+	app.get('/contacts', function(req, res){
+		res.sendFile(path.join(__dirname, "public/contacts.html"));
+	});
 
 
-	// Sign up form
+	// Insert new users to the DB
 	app.post('/signup', function(req, res){
 		
 		var query = connection.query(
 		"INSERT INTO users SET ?",
 		req.body,
+		function(error, response, fields) {
+			if (error) throw error;
+			console.log(req.body);
+			res.redirect('/');
+		}
+		);
+	})
+
+	// Insert new users to the DB
+	app.post('/contacts', function(req, res){
+		
+		var query = connection.query(
+		"INSERT INTO `firstResponse` (name, lastName, relationship, cellphone) values ?",
+		// ('" + name + "', '" + lastName + "', '" + relationship + "', '" + cellphone + "');"
+		(req.body),
 		function(error, response, fields) {
 			if (error) throw error;
 			console.log(req.body);
