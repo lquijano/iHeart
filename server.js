@@ -38,12 +38,15 @@
 		database: "fitTracker"
 	});
 
-
-
-//env twilio keys
-	let accountSid = process.env.ACCOUNT_SID;
-	let authToken = process.env.AUTHTOKEN;
-	let twilioClient = new twilio(accountSid, authToken);
+	//env fitbit keys
+	const fitbit_id = process.env.FITBIT_ID;
+	const fitbit_secret = process.env.FITBIT_SECRET;
+	const client = new fitbitApiClient("FITBIT_ID ", "FITBIT_SECRET");
+	
+	//env twilio keys
+	const accountSid = process.env.ACCOUNT_SID;
+	const authToken = process.env.AUTHTOKEN;
+	const twilioClient = new twilio(accountSid, authToken);
 	const number = '3237150014';
 
 
@@ -134,7 +137,7 @@
 		function(error, response, fields) {
 			if (error) throw error;
 			console.log(req.body);
-			res.redirect('/');
+			// res.redirect('/');
 		}
 		);
 	})
